@@ -49,10 +49,20 @@ io.on('connection', (socket) => {
     console.log('activeUser', activeUser);
   });
 
-  socket.on('disconnect', () => {
+  socket.on('disconnect', async () => {
     console.log('disconnected');
+
+    //update isActive to false 
+    try {
+      let foundUser = await User.findOneAndUpdate({ socket_id: socket.id }, { $set: { isActive: false } }, { new: true });
+      console.log(foundUser);
+    } catch (error) {
+      console.log(error);
+    }
     //remove from socket array
-    activeUser.splice(activeUser.indexOf(socket.id), 1)
+    // console.log(activeUser);
+    activeUser.splice(activeUser.indexOf(socket.id), 1);
+    // console.log(activeUser);
 
   })
 });
